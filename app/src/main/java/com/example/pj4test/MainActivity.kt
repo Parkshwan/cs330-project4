@@ -4,11 +4,12 @@ import android.Manifest.permission.CAMERA
 import android.Manifest.permission.RECORD_AUDIO
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.pj4test.fragment.CameraFragment
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +33,39 @@ class MainActivity : AppCompatActivity() {
         }
         else{
             requestPermissions(permissions, PERMISSIONS_REQUEST)
+        }
+    }
+
+    fun changeCameraFragment(index: Int){
+        when(index){
+            1 -> {
+                val camera = supportFragmentManager.findFragmentByTag("Camera")
+                if(camera != null) {
+                    Log.d("ChangeFragment", "REMOVING START")
+                    supportFragmentManager
+                        .beginTransaction()
+                        .hide(camera)
+                        .commit()
+                }
+            }
+
+            2 -> {
+                val camera = supportFragmentManager.findFragmentByTag("Camera")
+                if(camera != null) {
+                    Log.d("ChangeFragment", "Show")
+                    supportFragmentManager
+                        .beginTransaction()
+                        .show(camera)
+                        .commit()
+                }
+                else{
+                    supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.cameraFragmentContainerView, CameraFragment(), "Camera")
+                        .commit()
+                }
+
+            }
         }
     }
 }

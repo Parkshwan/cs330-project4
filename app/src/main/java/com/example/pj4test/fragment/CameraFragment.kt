@@ -50,9 +50,9 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
 
     private val fragmentCameraBinding
         get() = _fragmentCameraBinding!!
-    
+
     private lateinit var personView: TextView
-    
+
     private lateinit var personClassifier: PersonClassifier
     private lateinit var bitmapBuffer: Bitmap
     private var preview: Preview? = null
@@ -199,10 +199,10 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
                 imageHeight,
                 imageWidth
             )
-            
+
             // find at least one bounding box of the person
             val isPersonDetected: Boolean = results!!.find { it.categories[0].label == "person" } != null
-            
+
             // change UI according to the result
             if (isPersonDetected) {
                 personView.text = "PERSON"
@@ -222,6 +222,35 @@ class CameraFragment : Fragment(), PersonClassifier.DetectorListener {
     override fun onObjectDetectionError(error: String) {
         activity?.runOnUiThread {
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        if(hidden) {
+//            onDestroy()
+            cameraProviderFuture.addListener(
+                {
+                    // CameraProvider
+                    val cameraProvider = cameraProviderFuture.get()
+
+                    // Build and bind the camera use cases
+                    cameraProvider.unbindAll()
+                },
+                ContextCompat.getMainExecutor(requireContext())
+            )
+            Log.d("ChangeFragment", "Pause")
+        }
+        else{
+            cameraProviderFuture.addListener(
+                {
+                    val cameraProvider = cameraProviderFuture.get()
+
+                    bindCameraUseCases(cameraProvider)
+                },
+                ContextCompat.getMainExecutor(requireContext())
+            )
         }
     }
 }

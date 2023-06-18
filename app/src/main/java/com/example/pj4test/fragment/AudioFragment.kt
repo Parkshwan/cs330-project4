@@ -1,17 +1,25 @@
 package com.example.pj4test.fragment
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.pj4test.MainActivity
 import com.example.pj4test.ProjectConfiguration
 import com.example.pj4test.audioInference.SnapClassifier
 import com.example.pj4test.databinding.FragmentAudioBinding
 
+
+
 class AudioFragment: Fragment(), SnapClassifier.DetectorListener {
     private val TAG = "AudioFragment"
+
+    private var time = 0
+
+    private val setTime = 50
 
     private var _fragmentAudioBinding: FragmentAudioBinding? = null
 
@@ -60,10 +68,23 @@ class AudioFragment: Fragment(), SnapClassifier.DetectorListener {
                 snapView.text = "SNAP"
                 snapView.setBackgroundColor(ProjectConfiguration.activeBackgroundColor)
                 snapView.setTextColor(ProjectConfiguration.activeTextColor)
+
+                // fragment insertion
+                if(time < 0) {
+                    (activity as MainActivity).changeCameraFragment(2)
+                }
+                time = setTime
+
             } else {
                 snapView.text = "NO SNAP"
                 snapView.setBackgroundColor(ProjectConfiguration.idleBackgroundColor)
                 snapView.setTextColor(ProjectConfiguration.idleTextColor)
+
+                if(time == 0) {
+                    (activity as MainActivity?)!!.changeCameraFragment(1)
+                }
+                time--
+
             }
         }
     }
